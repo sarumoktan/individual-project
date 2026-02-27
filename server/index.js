@@ -1,40 +1,38 @@
-import express from "express";
-import dotenv from "dotenv";
-import connectDB from "./config/mongodb.js";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import customerRoutes from "./routes/customerRoutes.js";
-import homeRoutes from "./routes/home.js";
-import busScheduleRoutes from './routes/busScheduleRoutes.js';
-import busBookingRoutes from './routes/busBookingRoutes.js';
-
-dotenv.config();
+const cors = require("cors");
+const express = require("express");
 const app = express();
-const port = process.env.PORT || 4000;
+const { sequelize, connectDB } = require("./config/db");
+const path = require("path");
 
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true, // allow cookies, auth headers
+  }),
+);
 
-connectDB();
+//middleware
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({
-  credentials: true, 
-}));
+//make uploads folder public
+app.use("/uploads", express.static("uploads"));
 
+//userRoutes and productRoutes
+app.use("/api/auth", require("./routes/authRoute"));
 
-app.use("/", homeRoutes);
-app.use("/api/customer", customerRoutes);
-app.use('/api/', busScheduleRoutes);
-app.use('/api/bookings', busBookingRoutes);
-
-
-app.use((err, req, res, next) => {
-  console.error(" Error:", err.message);
-  res.status(err.status || 500).json({ msg: err.message || "Server Error" });
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the Home Page" });
 });
 
+//start server
+const startServer = async () => {
+  const PORT = process.env.PORT || 3000;
+  await connectDB();
+  await sequelize.sync({ alter: true }); //force and sync
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+};
 
-app.listen(port, () =>
-  console.log(` Server running on http://localhost:${port}`)
-);
+startServer();

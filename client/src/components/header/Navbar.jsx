@@ -7,74 +7,107 @@ import MenuButton from '../button/MenuButton';
 import { NavigationLinks } from '../../utils/index.js';
 
 export default function Navbar() {
-  const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
-  const Theme = useSelector((state) => state.theme.lightTheme);
+    const location = useLocation();
+    const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const Theme = useSelector((state) => state.theme.lightTheme);
 
+    useEffect(() => {
+        setIsOpen(false);
+    }, [location.pathname]);
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 12);
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
+    if (location.pathname === '/bus-booking/dashboard') return null;
 
-  if (location.pathname === '/bus-booking/dashboard') {
-    return null;
-  }
+    const isActive = (url) => location.pathname === url;
 
-  return (
-    <header
-      className={`${Theme ? 'bg-white' : 'bg-gray-900'} shadow-md sm:px-8 px-4 fixed top-0 left-0 min-w-full z-50 ${
-        isOpen ? 'overflow-hidden md:min-h-fit min-h-screen' : ''
-      }`}
-    >
-      <nav className={`${Theme ? 'bg-white' : 'bg-gray-900'} border-gray-200`}>
-        <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto p-4">
-          <Logo />
+    return (
+        <header
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
+                ${isOpen ? 'min-h-screen md:min-h-fit' : ''}
+                ${scrolled
+                    ? Theme
+                        ? 'bg-white shadow-md border-b border-gray-100'
+                        : 'bg-gray-900 shadow-md border-b border-gray-800'
+                    : Theme
+                        ? 'bg-white/80 backdrop-blur-md border-b border-gray-100/60'
+                        : 'bg-gray-900/80 backdrop-blur-md border-b border-gray-800/60'
+                }`}
+        >
+            <nav className="max-w-7xl mx-auto px-4 sm:px-8">
+                <div className="flex items-center justify-between h-16">
 
-          <div className="flex justify-start items-center flex-row-reverse">
-            <MenuButton onClick={() => setIsOpen(!isOpen)} />
-            <Switch />
-          </div>
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                        <Logo />
+                    </div>
 
-          <div className="flex w-full md:w-auto gap-4 flex-row items-center">
-            <div
-              className={`${
-                isOpen ? 'flex min-h-[85vh]' : 'hidden'
-              } w-full md:block md:w-auto rounded-xl`}
-              id="navbar-default"
-            >
-              <ul
-                className={`font-medium flex flex-col p-4 md:p-0 mt-8 border-2 ${
-                  Theme
-                    ? 'border-gray-200 bg-gray-100 md:bg-white'
-                    : 'bg-gray-800 md:bg-gray-900 border-gray-700'
-                } rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:min-w-fit min-w-full`}
-              >
-                {NavigationLinks.map((navigation, index) => (
-                  <li key={`${navigation.ID}${index}`} aria-current="page">
-                    <Link
-                      to={navigation.URL}
-                      className={`block py-2 px-3 ${
-                        location.pathname === navigation.URL
-                          ? Theme
-                            ? 'text-white bg-blue-700 md:text-blue-700'
-                            : 'text-white md:text-blue-500 bg-blue-700'
-                          : Theme
-                          ? 'text-gray-900 rounded hover:bg-gray-100 md:hover:text-blue-700 md:hover:bg-transparent'
-                          : 'md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent text-white'
-                      } rounded md:bg-transparent md:p-0`}
-                    >
-                      {navigation.Title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    {/* Desktop nav links */}
+                    <ul className="hidden md:flex items-center gap-1">
+                        {NavigationLinks.map((nav, i) => (
+                            <li key={`${nav.ID}${i}`}>
+                                <Link
+                                    to={nav.URL}
+                                    className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150
+                                        ${isActive(nav.URL)
+                                            ? 'bg-orange-500 text-white'
+                                            : Theme
+                                                ? 'text-gray-600 hover:text-orange-500 hover:bg-orange-50'
+                                                : 'text-gray-300 hover:text-orange-400 hover:bg-orange-500/10'
+                                        }`}
+                                >
+                                    {nav.Title}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
 
-            <Switch customerStyle={true} />
-          </div>
-        </div>
-      </nav>
-    </header>
-  );
+                    {/* Right side: switch + hamburger */}
+                    <div className="flex items-center gap-3">
+                        <Switch customerStyle={true} />
+
+                        {/* Hamburger — mobile only */}
+                        <div className="md:hidden">
+                            <MenuButton onClick={() => setIsOpen(!isOpen)} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile dropdown */}
+                {isOpen && (
+                    <div className="md:hidden pb-6 pt-2">
+                        <ul
+                            className={`flex flex-col gap-1 rounded-2xl p-3 border
+                                ${Theme
+                                    ? 'bg-gray-50 border-gray-100'
+                                    : 'bg-gray-800 border-gray-700'
+                                }`}
+                        >
+                            {NavigationLinks.map((nav, i) => (
+                                <li key={`mobile-${nav.ID}${i}`}>
+                                    <Link
+                                        to={nav.URL}
+                                        className={`flex items-center px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150
+                                            ${isActive(nav.URL)
+                                                ? 'bg-orange-500 text-white'
+                                                : Theme
+                                                    ? 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
+                                                    : 'text-gray-200 hover:bg-orange-500/10 hover:text-orange-400'
+                                            }`}
+                                    >
+                                        {nav.Title}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </nav>
+        </header>
+    );
 }
