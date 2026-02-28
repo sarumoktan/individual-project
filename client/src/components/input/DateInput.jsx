@@ -3,7 +3,6 @@ import { FaCalendarAlt } from 'react-icons/fa';
 export default function DateInput({value, onChange, error}) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">JOURNEY DATE</label>
         <div className="relative">
           <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
