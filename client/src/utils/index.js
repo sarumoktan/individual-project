@@ -1,13 +1,18 @@
 export { default as Home } from '../pages/Home';
 export { default as Booking } from '../pages/Booking';
 export { default as Dashboard } from '../pages/Dashboard';
+export { default as OperatorDashboard } from '../pages/operators/Dashboard';
+export { default as OperatorBuses } from '../pages/operators/Buses';
+export { default as OperatorSchedules } from '../pages/operators/Schedules';
+export { default as OperatorStaffs } from '../pages/operators/Staffs';
 export { default as Login } from '../pages/Login';
 export { default as Register } from '../pages/Register';
 export { default as SearchBuses } from '../pages/SearchBuses';
 export { default as BookingProceed } from '../pages/BookingProceed';
 export { default as Failed } from '../pages/Failed';
 export { default as BookingPayment } from '../pages/BookingPayment';
-export { default as Navbar } from '../components/header/Navbar';
+export { default as UserNavbar } from '../components/header/Navbar';
+export { default as AdminNavbar } from '../components/admin/Navbar';
 
 export { default as AmericaCard } from '../assets/images/amexcard-96.png';
 export { default as Genie } from '../assets/images/genie.png';

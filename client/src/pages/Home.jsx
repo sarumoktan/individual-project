@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaBus, FaQuestionCircle, FaExchangeAlt, FaBolt, FaShieldAlt, FaTicketAlt, FaHeadset, FaMobileAlt, FaRoute } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBus, FaQuestionCircle, FaExchangeAlt, FaBolt, FaShieldAlt, FaTicketAlt, FaHeadset, FaMobileAlt, FaRoute, FaCalendarAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import DateInput from '../components/input/DateInput.jsx';
+import { useDispatch } from 'react-redux';
 import { BookingActions } from '../redux/Booking-slice.jsx';
 
 const nepalLocations = [
@@ -22,21 +21,21 @@ const bgImage1 = 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=16
 const bgImage2 = 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=1600&q=80';
 
 const features = [
-    { icon: FaBolt,      title: 'Instant Booking',   desc: 'Seat confirmed in under 60 seconds.',            color: '#FFF3CD', iconColor: '#D97706' },
-    { icon: FaShieldAlt, title: 'Secure Payments',   desc: 'Encrypted transactions on every booking.',       color: '#DCFCE7', iconColor: '#16A34A' },
-    { icon: FaTicketAlt, title: 'Digital Tickets',   desc: 'Your ticket lives on your phone.',               color: '#DBEAFE', iconColor: '#2563EB' },
-    { icon: FaRoute,     title: '200+ Routes',        desc: 'Highways and remote towns, all provinces.',     color: '#F3E8FF', iconColor: '#7C3AED' },
-    { icon: FaMobileAlt, title: 'Mobile First',       desc: 'Full experience on any device, any screen.',    color: '#FFE4E6', iconColor: '#E11D48' },
-    { icon: FaHeadset,   title: '24/7 Support',       desc: 'Reachable any time something goes wrong.',      color: '#FEF9C3', iconColor: '#CA8A04' },
+    { icon: FaBolt,      title: 'Instant Booking',  desc: 'Seat confirmed in under 60 seconds.',          color: '#FFF3CD', iconColor: '#D97706' },
+    { icon: FaShieldAlt, title: 'Secure Payments',  desc: 'Encrypted transactions on every booking.',     color: '#DCFCE7', iconColor: '#16A34A' },
+    { icon: FaTicketAlt, title: 'Digital Tickets',  desc: 'Your ticket lives on your phone.',             color: '#DBEAFE', iconColor: '#2563EB' },
+    { icon: FaRoute,     title: '200+ Routes',       desc: 'Highways and remote towns, all provinces.',   color: '#F3E8FF', iconColor: '#7C3AED' },
+    { icon: FaMobileAlt, title: 'Mobile First',      desc: 'Full experience on any device, any screen.',  color: '#FFE4E6', iconColor: '#E11D48' },
+    { icon: FaHeadset,   title: '24/7 Support',      desc: 'Reachable any time something goes wrong.',    color: '#FEF9C3', iconColor: '#CA8A04' },
 ];
 
 const paymentMethods = [
-    { name: 'eSewa',           bg: '#60BB46', text: '#fff',     initial: 'eS', desc: 'Most used digital wallet in Nepal',    tag: 'Most Popular'  },
-    { name: 'Khalti',          bg: '#5C2D91', text: '#fff',     initial: 'Kh', desc: 'Fast and secure digital payments',     tag: 'Recommended'   },
-    { name: 'IME Pay',         bg: '#E31E24', text: '#fff',     initial: 'IM', desc: 'Remittance-linked wallet',             tag: null            },
-    { name: 'ConnectIPS',      bg: '#003087', text: '#fff',     initial: 'CI', desc: 'Direct transfer, all Nepal banks',     tag: null            },
-    { name: 'Cash',            bg: '#E8F5E9', text: '#2E7D32',  initial: '₨',  desc: 'Pay at the counter before departure',  tag: null            },
-    { name: 'Visa / Mastercard', bg: '#1A1A2E', text: '#fff',   initial: '💳', desc: 'All major international cards',        tag: null            },
+    { name: 'eSewa',             bg: '#60BB46', text: '#fff',    initial: 'eS', desc: 'Most used digital wallet in Nepal',   tag: 'Most Popular' },
+    { name: 'Khalti',            bg: '#5C2D91', text: '#fff',    initial: 'Kh', desc: 'Fast and secure digital payments',    tag: 'Recommended'  },
+    { name: 'IME Pay',           bg: '#E31E24', text: '#fff',    initial: 'IM', desc: 'Remittance-linked wallet',            tag: null           },
+    { name: 'ConnectIPS',        bg: '#003087', text: '#fff',    initial: 'CI', desc: 'Direct transfer, all Nepal banks',    tag: null           },
+    { name: 'Cash',              bg: '#E8F5E9', text: '#2E7D32', initial: '₨',  desc: 'Pay at the counter before departure', tag: null           },
+    { name: 'Visa / Mastercard', bg: '#1A1A2E', text: '#fff',    initial: '💳', desc: 'All major international cards',       tag: null           },
 ];
 
 function StationInput({ label, value, onChange, filtered, onSelect, error, placeholder }) {
@@ -106,9 +105,9 @@ export default function HomePage() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const formErrors = {};
-        if (!journeyDate)       formErrors.journeyDate = true;
-        if (!arrivalStation)    formErrors.arrivalStation = true;
-        if (!departureStation)  formErrors.departureStation = true;
+        if (!journeyDate)      formErrors.journeyDate = true;
+        if (!arrivalStation)   formErrors.arrivalStation = true;
+        if (!departureStation) formErrors.departureStation = true;
         if (Object.keys(formErrors).length > 0) { setErrors(formErrors); return; }
         dispatch(BookingActions.findBus({ departureStation, arrivalStation, journeyDate }));
         navigation('/bus-booking/search-buses');
@@ -170,7 +169,8 @@ export default function HomePage() {
                     </div>
 
                     <form onSubmit={handleSubmit}>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {/* 3 columns: From, To, Date+Button */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <StationInput
                                 label="From"
                                 placeholder="Departure city"
@@ -180,6 +180,7 @@ export default function HomePage() {
                                 onSelect={(s) => { setDepartureStation(s); setFilteredDep([]); }}
                                 error={errors.departureStation}
                             />
+
                             <StationInput
                                 label="To"
                                 placeholder="Arrival city"
@@ -190,44 +191,50 @@ export default function HomePage() {
                                 error={errors.arrivalStation}
                             />
 
+                            {/* Date inline */}
                             <div className="space-y-1">
                                 <label className="block text-xs font-semibold tracking-widest text-gray-400 uppercase">
                                     Date
                                 </label>
-                                <DateInput
-                                    value={journeyDate}
-                                    onChange={(e) => setJourneyDate(e.target.value)}
-                                    error={errors.journeyDate}
-                                />
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="block text-xs font-semibold tracking-widest text-transparent uppercase select-none">
-                                    &nbsp;
-                                </label>
-                                <button
-                                    type="submit"
-                                    className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm"
-                                >
-                                    <FaBus className="h-4 w-4" />
-                                    Find Buses
-                                </button>
+                                <div className="relative">
+                                    <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400 text-sm z-10 pointer-events-none" />
+                                    <input
+                                        type="date"
+                                        value={journeyDate}
+                                        onChange={(e) => setJourneyDate(e.target.value)}
+                                        min={current.toISOString().split('T')[0]}
+                                        className={`w-full pl-9 pr-3 py-3 bg-white border-2 rounded-xl text-gray-800 text-sm font-medium
+                                            focus:outline-none transition-all
+                                            ${journeyDate ? 'border-orange-400' : 'border-gray-200'}
+                                            ${errors.journeyDate ? 'border-red-400 bg-red-50' : 'hover:border-gray-300'}`}
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                        {/* Actions row */}
+                        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    type="button"
+                                    onClick={swapStations}
+                                    className="text-gray-400 hover:text-orange-500 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                                >
+                                    <FaExchangeAlt className="h-3 w-3" />
+                                    Swap stations
+                                </button>
+                                <a href="#" className="text-gray-400 hover:text-orange-500 flex items-center gap-1.5 text-xs font-semibold transition-colors">
+                                    <FaQuestionCircle className="h-3 w-3" />
+                                    Need help?
+                                </a>
+                            </div>
                             <button
-                                type="button"
-                                onClick={swapStations}
-                                className="text-gray-400 hover:text-orange-500 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                                type="submit"
+                                className="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold py-2.5 px-6 rounded-xl transition-all duration-150 flex items-center gap-2 text-sm"
                             >
-                                <FaExchangeAlt className="h-3 w-3" />
-                                Swap stations
+                                <FaBus className="h-4 w-4" />
+                                Find Buses
                             </button>
-                            <a href="#" className="text-gray-400 hover:text-orange-500 flex items-center gap-1.5 text-xs font-semibold transition-colors">
-                                <FaQuestionCircle className="h-3 w-3" />
-                                Need help?
-                            </a>
                         </div>
                     </form>
                 </div>
