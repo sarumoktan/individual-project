@@ -1,38 +1,49 @@
-const cors = require("cors");
 const express = require("express");
-const app = express();
-const { sequelize, connectDB } = require("./config/db");
+const cors = require("cors");
 const path = require("path");
+const { sequelize, connectDB } = require("./config/db");
+require("dotenv").config();
+const { Register } = require("./models/association");
 
+const app = express();
+
+// 1. Security/CORS
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
-    credentials: true, // allow cookies, auth headers
+    origin: "http://localhost:5173",
+    credentials: true,
   }),
 );
 
-//middleware
+// 2. Parsers (placed before routes)
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-//make uploads folder public
-app.use("/uploads", express.static("uploads"));
+// 3. Static Files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-//userRoutes and productRoutes
-app.use("/api/auth", require("./routes/authRoute"));
+// 4. Routes
+app.use("/api", require("./routes/homeRoute"));
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Home Page" });
 });
 
-//start server
+// 5. Server Lifecycle
 const startServer = async () => {
-  const PORT = process.env.PORT || 3000;
-  await connectDB();
-  await sequelize.sync({ alter: true }); //force and sync
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
+  try {
+    const PORT = process.env.PORT || 3000;
+
+    await connectDB();
+    await sequelize.sync({ alter: true });
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
 };
 
 startServer();
