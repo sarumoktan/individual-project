@@ -1,22 +1,12 @@
-const router = require("express").Router();
+const { Router } = require("express");
+const { registerUser, loginUser, getUser, updateUser } = require("../controllers/authController.js")
+const authMiddleware = require("../middleware/authMiddleware");
 
-const {
-  registerUser,
-  userLogin,
-  deleteUser,
-  forgotPassword,
-} = require("../controllers/authController");
+const router = Router();
 
-
-//post request
 router.post("/register", registerUser);
-// router.post("/login", userLogin);
-// router.post("/forgot-password", forgotPassword);
-// router.post("/reset-password", resetPassword);
-// router.post("/verify-token", verifyToken);
-// router.post("/verify-email", verifyEmail);
-
-//delete request
-// router.delete("/delete-user", authMiddleware, deleteUser);
+router.post("/login", loginUser);
+router.get("/get", authMiddleware, getUser);
+router.put("/update", authMiddleware, updateUser);
 
 module.exports = router;
