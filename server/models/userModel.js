@@ -11,9 +11,9 @@ const Register = sequelize.define(
     },
 
     role: {
-      type: DataTypes.ENUM("user", "conductor"),
+      type: DataTypes.ENUM("passenger", "operator"),
+      defaultValue: "passenger",
       allowNull: false,
-      defaultValue: "user",
     },
 
     username: {
@@ -22,6 +22,12 @@ const Register = sequelize.define(
     },
 
     email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
+
+    phone_no: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
